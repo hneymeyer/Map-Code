@@ -1,0 +1,205 @@
+#Hannah Neymeyer
+#Prof. Locklair
+#CSC 415
+#7/23/22
+#Mapping Nodes; directions
+
+class Graph:
+    def __init__(self, adjacencyList):
+        self.adjacencyList = adjacencyList
+    def get_neighbors(self, v):
+        return self.adjacencyList[v]
+        
+    # heuristic function with equal values for all nodes
+    def h(self, n):
+        H = {
+            'Start': 1,
+            'Van_44': 1,
+            'Van_43': 1,
+            'Van_42': 1,
+            'Park_42': 1,
+            'Park_41': 1,
+            'Park_40': 1,
+            'Madison_45': 1,
+            'Madison_44': 1,
+            'Madison_43': 1,
+            'Madison_42': 1,
+            'Madison_41': 1,
+            'Madison_40': 1,
+            'Madison_39': 1,
+            '5_44': 1,
+            '5_43': 1,
+            '5_42': 1,
+            '5_41': 1,
+            '5_40': 1,
+            '5_39': 1,
+            '5_38': 1,
+            'America_38': 1,
+            'America_40': 1,
+            'America_41': 1,
+            'America_42': 1,
+            'Goal': 1
+        }
+        return H[n]
+
+        # heuristic function with equal values for all nodes
+#THIS IS THE HEURISTIC VALUES FOR 2-7
+    def h2(self, n):
+        H = {
+            'Start': 1,
+            'Van_44': 1,
+            'Van_43': 1,
+            'Van_42': 4,
+            'Park_42': 4,
+            'Park_41': 1,
+            'Park_40': 1,
+            'Madison_45': 1,
+            'Madison_44': 1,
+            'Madison_43': 4,
+            'Madison_42': 1,
+            'Madison_41': 1,
+            'Madison_40': 1,
+            'Madison_39': 6,
+            '5_45': 4,
+            '5_44': 4,
+            '5_43': 4,
+            '5_42': 4,
+            '5_41': 4,
+            '5_40': 4,
+            '5_39': 6,
+            '5_38': 4,
+            'America_38': 1,
+            'America_40': 1,
+            'America_41': 1,
+            'America_42': 4,
+            'Goal': 6
+        }
+
+        return H[n]
+
+    def a_star_algorithm(self, start_node, stop_node, answer):
+        # open_list is a list of nodes which have been visited, but who's neighbors
+        # haven't all been inspected, starts off with the start node
+        # closed_list is a list of nodes which have been visited
+        # and who's neighbors have been inspected
+        open_list = set([start_node])
+        closed_list = set([])
+
+        # g contains current distances from start_node to all other nodes
+        # the default value (if it's not found in the map) is +infinity
+        graph = {}
+
+        graph[start_node] = 0
+
+        # parents contains an adjacency map of all nodes
+        parents = {}
+        parents[start_node] = start_node
+
+        while len(open_list) > 0:
+            n = None
+
+            # find a node with the lowest value of f() - evaluation function
+            if answer == 'no':
+                for v in open_list:
+                    if n is None or graph[v] + self.h(v) < graph[n] + self.h(n):
+                        n = v
+            else:
+                for v in open_list:
+                    if n is None or graph[v] + self.h2(v) < graph[n] + self.h2(n):
+                        n = v
+
+            if n is None:
+                print('Path does not exist!')
+                return None
+
+            # if the current node is the stop_node
+            # then we begin reconstructing the path from it to the start_node
+            if n == stop_node:
+                recreate_path = []
+
+                while parents[n] != n:
+                    recreate_path.append(n)
+
+                    n = parents[n]
+
+                recreate_path.append(start_node)
+
+                recreate_path.reverse()
+
+                print('Path found: {}'.format(recreate_path))
+                return recreate_path
+
+            # for all neighbors of the current node do
+            for (m, weight) in self.get_neighbors(n):
+                # if the current node isn't in both open_list and closed_list
+                # add it to open_list and note n as it's parent
+                if m not in open_list and m not in closed_list:
+                    open_list.add(m)
+                    parents[m] = n
+                    graph[m] = graph[n] + weight
+
+                # otherwise, check if it's quicker to first visit n, then m
+                # and if it is, update parent data and g data
+                # and if the node was in the closed_list, move it to open_list
+                else:
+                    if graph[m] > graph[n] + weight:
+                        graph[m] = graph[n] + weight
+                        parents[m] = n
+
+                        if m in closed_list:
+                            closed_list.remove(m)
+                            open_list.add(m)
+
+            # remove n from the open_list, and add it to closed_list
+            # because all of his neighbors were inspected
+            open_list.remove(n)
+            closed_list.add(n)
+
+        print('Path does not exist!')
+        return None
+
+
+adjacencyList = {
+    'Start': [('Van_44', 1), ('Madison_45', 1)],
+    'Van_44': [('Van_43', 1), ('Madison_44', 1)],
+    'Van_43': [('Madison_43', 1), ('Van_42', 1)],
+    'Van_42': [('Madison_42', 1)],
+    'Park_42': [('Van_42', 1)],
+    'Park_41': [('Park_42', 1)],
+    'Park_40': [('Park_41', 1)],
+    'Madison_45': [('Madison_44', 1)],
+    'Madison_44': [('Van_44', 1), ('Madison_45', 1)],
+    'Madison_43': [('5_43', 2), ('Madison_44', 1)],
+    'Madison_42': [('Madison_43', 1), ('5_42', 2)],
+    'Madison_41': [('Park_41', 2), ('Madison_42', 1)],
+    'Madison_40': [('Park_40', 2), ('Madison_41', 1)],
+    'Madison_39': [('5_39', 2), ('Madison_40', 1)],
+    '5_44': [('5_43', 1), ('Madison_44', 2)],
+    '5_43': [('5_42', 1)],
+    '5_42': [('5_41', 1), ('America_42', 3)],
+    '5_41': [('5_40', 1), ('Madison_41', 2)],
+    '5_40': [('5_39', 1), ('Madison_40', 2)],
+    '5_39': [('5_38', 1), ('Goal', 3)],
+    '5_38': [],
+    'America_38': [('Goal', 1)],
+    'America_40': [('America_41', 1), ('5_40', 3)],
+    'America_41': [('America_42', 1)],
+    'America_42': [],
+    'Goal': [('America_40', 1)],
+}
+class answer():
+    answer = input("Is it between 2pm and 7pm Central Time? Answer 'yes' or 'no'")
+    if answer == 'yes':
+        graph1 = Graph(adjacencyList)
+        graph1.a_star_algorithm('Start', 'Goal', answer)
+    elif answer == 'no':
+        print("Is the time between 2pm and 7pm? Answer 'yes' or 'no'")
+        answer2 = input()
+        graph2 = Graph(adjacencyList)
+        print('Between 2pm and 7pm:')
+        graph2.a_star_algorithm('Start', 'Goal', answer2)
+while True:
+    
+    if input('Do You Want To Continue? ') != 'y': 
+        answer()
+        break
