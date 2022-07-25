@@ -45,7 +45,7 @@ class Graph:
         # heuristic function with equal values for all nodes
 #THIS IS THE HEURISTIC VALUES FOR 2-7
     def h2(self, n):
-        H = {
+        H2 = {
             'Start': 1,
             'Van_44': 1,
             'Van_43': 1,
@@ -75,7 +75,7 @@ class Graph:
             'Goal': 6
         }
 
-        return H[n]
+        return H2[n]
 
     def a_star_algorithm(self, start_node, stop_node, answer):
         # open_list is a list of nodes which have been visited, but who's neighbors
@@ -158,7 +158,7 @@ class Graph:
         print('Path does not exist!')
         return None
 
-
+#Values for not during 2-7
 adjacencyList = {
     'Start': [('Van_44', 1), ('Madison_45', 1)],
     'Van_44': [('Van_43', 1), ('Madison_44', 1)],
@@ -166,6 +166,35 @@ adjacencyList = {
     'Van_42': [('Madison_42', 1)],
     'Park_42': [('Van_42', 1)],
     'Park_41': [('Park_42', 1)],
+    'Park_40': [('Park_41', 1)],
+    'Madison_45': [('Madison_44', 1)],
+    'Madison_44': [('Van_44', 1), ('Madison_45', 1)],
+    'Madison_43': [('5_43', 4), ('Madison_44', 1)],
+    'Madison_42': [('Madison_43', 1), ('5_42', 4)],
+    'Madison_41': [('Park_41', 2), ('Madison_42', 1)],
+    'Madison_40': [('Park_40', 2), ('Madison_41', 1)],
+    'Madison_39': [('5_39', 6), ('Madison_40', 1)],
+    '5_44': [('5_43', 4), ('Madison_44', 2)],
+    '5_43': [('5_42', 4)],
+    '5_42': [('5_41', 4), ('America_42', 3)],
+    '5_41': [('5_40', 4), ('Madison_41', 2)],
+    '5_40': [('5_39', 6), ('Madison_40', 2)],
+    '5_39': [('5_38', 4), ('Goal', 3)],
+    '5_38': [],
+    'America_38': [('Goal', 1)],
+    'America_40': [('America_41', 1), ('5_40', 3)],
+    'America_41': [('America_42', 4)],
+    'America_42': [],
+    'Goal': [('America_40', 1)],
+}
+#values for during 2-7
+adjacencyList2 = {
+    'Start': [('Van_44', 1), ('Madison_45', 1)],
+    'Van_44': [('Van_43', 1), ('Madison_44', 1)],
+    'Van_43': [('Madison_43', 1), ('Van_42', 4)],
+    'Van_42': [('Madison_42', 1)],
+    'Park_42': [('Van_42', 4)],
+    'Park_41': [('Park_42', 4)],
     'Park_40': [('Park_41', 1)],
     'Madison_45': [('Madison_44', 1)],
     'Madison_44': [('Van_44', 1), ('Madison_45', 1)],
@@ -187,19 +216,14 @@ adjacencyList = {
     'America_42': [],
     'Goal': [('America_40', 1)],
 }
-class answer():
-    answer = input("Is it between 2pm and 7pm Central Time? Answer 'yes' or 'no'")
-    if answer == 'yes':
-        graph1 = Graph(adjacencyList)
-        graph1.a_star_algorithm('Start', 'Goal', answer)
-    elif answer == 'no':
-        print("Is the time between 2pm and 7pm? Answer 'yes' or 'no'")
-        answer2 = input()
-        graph2 = Graph(adjacencyList)
-        print('Between 2pm and 7pm:')
-        graph2.a_star_algorithm('Start', 'Goal', answer2)
-while True:
-    
-    if input('Do You Want To Continue? ') != 'y': 
-        answer()
-        break
+print("Is the time between 2pm and 7pm? Answer 'yes' or 'no'")
+answer = input()
+g1 = Graph(adjacencyList)
+print('Not Between 2pm and 7pm:')
+g1.a_star_algorithm('Start', 'Goal', answer)
+print("Is the time between 2pm and 7pm? Answer 'yes' or 'no'")
+answer2 = input()
+g2 = Graph(adjacencyList2)
+print('Between 2pm and 7pm:')
+g2.a_star_algorithm('Start', 'Goal', answer2)
+
